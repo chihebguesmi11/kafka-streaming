@@ -1,0 +1,39 @@
+STEP 1:
+*RUN THIS COMMAND*
+docker compose up -d
+*AFTER DOWNLOAD FINISHES, RUN THIS*
+docker compose exec kafka bash
+
+STEP 2:
+*CREATE A TOPIC*
+kafka-topics \
+  --create \
+  --topic my-first-topic \
+  --bootstrap-server localhost:9092 \
+  --partitions 1 \
+  --replication-factor 1
+
+STEP 3:
+*COPY YOUR CSV FILE INTO THE KAFKA IMAGE*
+docker cp transactions.csv hands-on-kafka-main-kafka-1:/tmp/your_file.csv
+
+*VERIFY ITS INSIDE THE CONTAINER*
+ls /tmp
+*IF YOU SEE "your_file.csv" THEN YOU ARE GOOD TO GO*
+
+STEP 4:
+*RUN CONSUMER IN FIRST TERMINAL*
+kafka-console-consumer \
+  --topic my-first-topic \
+  --bootstrap-server localhost:9092 \
+  --from-beginning
+
+STEP 5: 
+*OPEN A NEW TERMINAL FOR THE PRODUCER*
+docker compose exec kafka bash
+
+STEP 6:
+*PRODUCE MESSAGES FROM OUR CSV FILE*
+kafka-console-producer \
+  --topic my-first-topic \
+  --bootstrap-server localhost:9092 < /tmp/your_file.csv
